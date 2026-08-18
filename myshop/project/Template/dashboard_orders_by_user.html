@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container" style="max-width:1000px;padding:40px 20px;">
+  <h1 style="font-weight:800;">Orders by User</h1>
+  <p style="color:#666;margin-bottom:20px;">Summary of orders grouped by user. Click "View" to see detailed orders for a user.</p>
+
+  <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,0.06);">
+    <thead style="background:#f6f7fb;color:#555;text-align:left;">
+      <tr>
+        <th style="padding:14px 18px;border-bottom:1px solid #eee;">User</th>
+        <th style="padding:14px 18px;border-bottom:1px solid #eee;">Email</th>
+        <th style="padding:14px 18px;border-bottom:1px solid #eee;">Orders</th>
+        <th style="padding:14px 18px;border-bottom:1px solid #eee;">Total Spent</th>
+        <th style="padding:14px 18px;border-bottom:1px solid #eee;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in user_stats %}
+      <tr style="border-bottom:1px solid #f0f0f0;">
+        <td style="padding:12px 18px;">{{ u.user__first_name }} {{ u.user__last_name }} {% if not u.user__first_name and not u.user__last_name %}({{ u.user__username }}){% endif %}</td>
+        <td style="padding:12px 18px;">{{ u.user__email }}</td>
+        <td style="padding:12px 18px;">{{ u.order_count }}</td>
+        <td style="padding:12px 18px;">₹{{ u.total_spent }}</td>
+        <td style="padding:12px 18px;"><a href="{% url 'dashboard_orders_by_user_detail' u.user__id %}" style="background:#1a73e8;color:#fff;padding:8px 12px;border-radius:10px;text-decoration:none;">View</a></td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" style="padding:30px;text-align:center;color:#999;">No orders yet.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock content %}

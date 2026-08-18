@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+  .form-wrapper {
+    background: linear-gradient(135deg, #f8f4ff 0%, #fff5ee 100%);
+    min-height: 80vh;
+    padding: 50px 20px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .form-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 44px 48px;
+    width: 100%;
+    max-width: 560px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+  }
+  .form-card-title {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: #1a1a2e;
+    margin-bottom: 6px;
+  }
+  .form-card-title span { color: #f05f2e; }
+  .form-card-subtitle {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 32px;
+  }
+  .type-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 28px;
+  }
+  .type-shop     { background: #fff5ee; color: #f05f2e; border: 1px solid #f5a623; }
+  .type-featured { background: #eef0ff; color: #3366ff; border: 1px solid #3366ff; }
+  .field-label {
+    font-weight: 700;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #555;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .field-input {
+    border: 1.5px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+    background: #fafafa;
+  }
+  .field-input:focus {
+    border-color: #f5a623;
+    box-shadow: 0 0 0 3px rgba(245,166,35,0.12);
+    background: #fff;
+    outline: none;
+  }
+  .current-image {
+    margin-bottom: 12px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .current-image img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  .btn-submit {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, #f05f2e, #f5a623);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 8px;
+  }
+  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(240,95,46,0.4); }
+  .btn-cancel {
+    display: block;
+    text-align: center;
+    color: #888;
+    font-size: 0.9rem;
+    text-decoration: none;
+    margin-top: 16px;
+    transition: color 0.2s;
+  }
+  .btn-cancel:hover { color: #f05f2e; text-decoration: none; }
+</style>
+
+<div class="form-wrapper">
+  <div class="form-card">
+    <h2 class="form-card-title">
+      {% if action == 'Add' %}Add New{% else %}Edit{% endif %} <span>Product</span>
+    </h2>
+    <p class="form-card-subtitle">
+      {% if action == 'Add' %}Fill in the details to add a new product to your store.
+      {% else %}Update the product information below.{% endif %}
+    </p>
+
+    <span class="type-badge {% if product_type == 'shop' %}type-shop{% else %}type-featured{% endif %}">
+      {% if product_type == 'shop' %}Shop Product{% else %}Featured Product{% endif %}
+    </span>
+
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="form-group mb-4">
+        <label class="field-label">Product Name</label>
+        {{ form.Name }}
+        {% if form.Name.errors %}
+          <div style="color:#e53935; font-size:0.82rem; margin-top:4px;">{{ form.Name.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group mb-4">
+        <label class="field-label">Price</label>
+        {{ form.Price }}
+        {% if form.Price.errors %}
+          <div style="color:#e53935; font-size:0.82rem; margin-top:4px;">{{ form.Price.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group mb-4">
+        <label class="field-label">Product Image</label>
+        {% if product and product.image %}
+          <div class="current-image">
+            <img src="{{ product.image.url }}" alt="{{ product.Name }}">
+            <div>
+              <div style="font-weight:600; color:#333; font-size:0.9rem;">Current image</div>
+              <div style="color:#888; font-size:0.8rem;">Upload a new one to replace it</div>
+            </div>
+          </div>
+        {% endif %}
+        {{ form.image }}
+        {% if form.image.errors %}
+          <div style="color:#e53935; font-size:0.82rem; margin-top:4px;">{{ form.image.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="btn-submit">
+        {% if action == 'Add' %}Add Product →{% else %}Save Changes →{% endif %}
+      </button>
+    </form>
+
+    <a href="{% url 'dashboard' %}" class="btn-cancel">← Back to Dashboard</a>
+  </div>
+</div>
+
+{% endblock content %}

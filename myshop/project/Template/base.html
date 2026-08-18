@@ -1,0 +1,270 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="keywords" content="gifts, shop, giftos" />
+  <meta name="description" content="Giftos - Your Premium Gift Shop" />
+  <meta name="author" content="Giftos" />
+  <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/x-icon">
+  <title>Giftos — Premium Gift Shop</title>
+
+  <link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
+  <link href="{% static 'css/style.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/dynamic.css' %}" rel="stylesheet" />
+
+  <style>
+    /* ── Flash Messages ── */
+    .flash-messages {
+      position: fixed;
+      top: 16px;
+      right: 20px;
+      z-index: 11000; /* ensure popups appear in front */
+      width: 360px;
+      pointer-events: auto;
+    }
+    .flash-messages .alert {
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      font-weight: 500;
+      animation: slideIn 0.4s ease;
+    }
+    @keyframes slideIn {
+      from { transform: translateX(120%); opacity: 0; }
+      to   { transform: translateX(0);   opacity: 1; }
+    }
+
+    /* ── Dashboard badge in nav ── */
+    .dashboard-badge {
+      background: linear-gradient(135deg, #f05f2e, #f5a623);
+      color: #fff !important;
+      border-radius: 20px;
+      padding: 4px 14px !important;
+      font-weight: 600;
+      font-size: 0.82rem;
+      margin-left: 4px;
+      transition: transform 0.2s;
+    }
+    .dashboard-badge:hover { transform: scale(1.06); }
+
+    /* ── Nav user links ── */
+    .user_option li a {
+      color: #fff;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 5px 12px;
+      border-radius: 20px;
+      transition: background 0.2s;
+    }
+    .user_option li a:hover { background: rgba(255,255,255,0.15); }
+    .user_option .logout-link a { color: #ffb3b3 !important; }
+
+    /* ── Login / Register pill buttons — same orange gradient style ── */
+    .btn-nav-login,
+    .btn-nav-register {
+      background: linear-gradient(135deg, #f05f2e, #f5a623);
+      border: none;
+      color: #fff !important;
+      padding: 6px 20px !important;
+      border-radius: 20px;
+      font-weight: 700 !important;
+      font-size: 0.88rem;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 3px 12px rgba(240,95,46,0.35);
+      display: inline-block;
+    }
+    .btn-nav-login:hover,
+    .btn-nav-register:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(240,95,46,0.55);
+      text-decoration: none;
+      color: #fff !important;
+    }
+
+    /* ── Dynamic active nav item ── */
+    .navbar-nav .nav-item.current-page > .nav-link {
+      color: #f5a623 !important;
+      font-weight: 700;
+      position: relative;
+    }
+    .navbar-nav .nav-item.current-page > .nav-link::after {
+      content: '';
+      display: block;
+      width: 60%;
+      height: 2px;
+      background: linear-gradient(90deg, #f05f2e, #f5a623);
+      border-radius: 2px;
+      margin: 2px auto 0;
+    }
+    /* ── Navbar background when paying online ── */
+    .nav-payment-bg {
+      background: linear-gradient(90deg, rgba(240,95,46,0.95), rgba(245,166,35,0.95));
+      box-shadow: 0 6px 20px rgba(240,95,46,0.12);
+      border-radius: 8px;
+      padding: 8px 14px;
+    }
+    /* Allow flash popups to sit above header/nav */
+    .header_section { position: relative; z-index: 10000; }
+
+    /* Slight responsive adjustment so popups don't overlap important nav controls on small screens */
+    @media (max-width: 600px) {
+      .flash-messages { right: 8px; left: 8px; width: auto; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ── Flash Messages ── -->
+  <div class="flash-messages">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+          {% if message.tags == 'success' %}✅{% elif message.tags == 'error' %}❌{% else %}ℹ️{% endif %}
+          {{ message }}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <div class="hero_area">
+    <!-- header -->
+    <header class="header_section">
+      <nav class="navbar navbar-expand-lg custom_nav-container">
+        <a class="navbar-brand" href="{% url 'index.html' %}">
+          <span>Giftos</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class=""></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav">
+            <li class="nav-item {% if request.path == '/' %}current-page{% endif %}">
+              <a class="nav-link" href="{% url 'index.html' %}">Home</a>
+            </li>
+            <li class="nav-item {% if '/shop' in request.path %}current-page{% endif %}">
+              <a class="nav-link" href="{% url 'shop.html' %}">Shop</a>
+            </li>
+            <li class="nav-item {% if '/why' in request.path %}current-page{% endif %}">
+              <a class="nav-link" href="{% url 'why.html' %}">Why Us</a>
+            </li>
+            <li class="nav-item {% if '/testimonial' in request.path %}current-page{% endif %}">
+              <a class="nav-link" href="{% url 'testimonial.html' %}">Testimonial</a>
+            </li>
+            <li class="nav-item {% if '/contact' in request.path %}current-page{% endif %}">
+              <a class="nav-link" href="{% url 'contact.html' %}">Contact Us</a>
+            </li>
+            {% if user.is_authenticated and user.is_staff %}
+            <li class="nav-item {% if '/dashboard' in request.path %}current-page{% endif %}">
+              <a class="nav-link dashboard-badge" href="{% url 'dashboard' %}">⚙ Dashboard</a>
+            </li>
+            {% endif %}
+          </ul>
+          <div class="user_option" style="display:flex;align-items:center;gap:12px;">
+            <form class="form-inline" action="{% url 'search' %}" method="get" style="margin:0; display:flex; align-items:center; gap:8px;">
+              <input type="search" name="q" placeholder="Search products" aria-label="Search" style="padding:6px 10px; border-radius:20px; border:1px solid #eee;" />
+              <button class="btn nav_search-btn" type="submit">
+                <i class="fa fa-search" aria-hidden="true"></i>
+              </button>
+            </form>
+            {% if user.is_authenticated %}
+              <a href="{% url 'profile' %}" class="btn-nav-login">👤 {{ user.username }}</a>
+              <a href="{% url 'logout' %}" style="color:#ffb3b3; font-weight:600; text-decoration:none; font-size:0.88rem;">Logout</a>
+            {% else %}
+              <a href="{% url 'login' %}" class="btn-nav-login">Login</a>
+              <a href="{% url 'register' %}" class="btn-nav-register">Register</a>
+            {% endif %}
+            <a href="{% url 'wishlist' %}" class="nav-wishlist" title="Wishlist">
+              <i class="fa fa-heart" aria-hidden="true"></i>
+              {% if wishlist_count and wishlist_count > 0 %}
+                <span class="wishlist-badge">{{ wishlist_count }}</span>
+              {% endif %}
+            </a>
+            <a href="{% url 'cart' %}">
+              <i class="fa fa-shopping-bag" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <!-- end header section -->
+
+    {% block content %}
+    {% endblock content %}
+
+    <!-- info section -->
+    <section class="info_section layout_padding2-top">
+      <div class="social_container">
+        <div class="social_box">
+          <a href=""><i class="fa fa-facebook" aria-hidden="true"></i></a>
+          <a href=""><i class="fa fa-twitter" aria-hidden="true"></i></a>
+          <a href="{% url 'cart' %}"><i class="fa fa-shopping-bag" aria-hidden="true"></i></a>
+          <a href=""><i class="fa fa-youtube" aria-hidden="true"></i></a>
+        </div>
+      </div>
+      <div class="info_container">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6 col-lg-3">
+              <h6>ABOUT US</h6>
+              <p>Giftos — your go-to premium gift shop. We curate the finest gifts for every occasion.</p>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <div class="info_form">
+                <h5>Newsletter</h5>
+                <form action="#">
+                  <input type="email" placeholder="Enter your email">
+                  <button>Subscribe</button>
+                </form>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <h6>NEED HELP</h6>
+              <p>Our support team is available 24/7 to help you find the perfect gift.</p>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <h6>CONTACT US</h6>
+              <div class="info_link-box">
+                <a href=""><i class="fa fa-map-marker" aria-hidden="true"></i><span> Gb road 123 London UK</span></a>
+                <a href=""><i class="fa fa-phone" aria-hidden="true"></i><span>+01 12345678901</span></a>
+                <a href=""><i class="fa fa-envelope" aria-hidden="true"></i><span>hello@giftos.com</span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="footer_section">
+        <div class="container">
+          <p>&copy; <span id="displayYear"></span> Giftos. All Rights Reserved.</p>
+        </div>
+      </footer>
+    </section>
+  </div>
+
+  <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap.js' %}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+  <script src="{% static 'js/custom.js' %}"></script>
+  <script>
+    document.getElementById('displayYear').textContent = new Date().getFullYear();
+    // Auto-dismiss flash messages after 5s
+    setTimeout(() => {
+      document.querySelectorAll('.flash-messages .alert').forEach(el => {
+        el.classList.remove('show');
+        setTimeout(() => el.remove(), 300);
+      });
+    }, 5000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h2 class="mt-4">Order Confirmation</h2>
+<p>Thank you! Your order <strong>#{{ order.pk }}</strong> has been placed successfully.</p>
+<h4>Order Details</h4>
+<ul>
+  <li>Name: {{ order.name }}</li>
+  <li>Email: {{ order.email }}</li>
+  <li>Phone: {{ order.phone }}</li>
+  <li>Address: {{ order.address }}</li>
+  <li>Total Amount: ₹{{ order.total_amount }}</li>
+  <li>Status: {{ order.get_status_display }}</li>
+</ul>
+<h4>Items</h4>
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>Price</th>
+      <th>Quantity</th>
+      <th>Subtotal</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in order.items.all %}
+    <tr>
+      <td>{{ item.name }}</td>
+      <td>₹{{ item.price }}</td>
+      <td>{{ item.quantity }}</td>
+      <td>₹{{ item.subtotal }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<a href="{% url 'shop.html' %}" class="btn btn-primary mt-3">Continue Shopping</a>
+{% endblock %}

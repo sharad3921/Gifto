@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container" style="max-width:1000px;padding:40px 20px;">
+  <h1 style="font-weight:800;">Orders for {{ user.get_full_name|default:user.username }}</h1>
+  <p style="color:#666;margin-bottom:20px;">Total Spent: <strong>₹{{ total }}</strong></p>
+
+  <div style="background:#fff;border-radius:8px;padding:16px;box-shadow:0 6px 24px rgba(0,0,0,0.06);">
+    {% if orders %}
+      <table style="width:100%;border-collapse:collapse;">
+        <thead style="background:#f6f7fb;color:#555;text-align:left;">
+          <tr>
+            <th style="padding:12px 14px;border-bottom:1px solid #eee;">Order #</th>
+            <th style="padding:12px 14px;border-bottom:1px solid #eee;">Date</th>
+            <th style="padding:12px 14px;border-bottom:1px solid #eee;">Items</th>
+            <th style="padding:12px 14px;border-bottom:1px solid #eee;">Amount</th>
+            <th style="padding:12px 14px;border-bottom:1px solid #eee;">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for o in orders %}
+          <tr style="border-bottom:1px solid #f0f0f0;">
+            <td style="padding:10px 14px;">#{{ o.pk }}</td>
+            <td style="padding:10px 14px;">{{ o.created_at|date:"Y-m-d H:i" }}</td>
+            <td style="padding:10px 14px;">{{ o.items.count }}</td>
+            <td style="padding:10px 14px;">₹{{ o.total_amount }}</td>
+            <td style="padding:10px 14px;">{{ o.get_status_display }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p style="color:#777;">No orders found for this user.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}

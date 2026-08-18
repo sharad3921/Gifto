@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+  .auth-wrapper {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    padding: 40px 20px;
+  }
+  .auth-card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 24px;
+    padding: 48px 44px;
+    width: 100%;
+    max-width: 560px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+    color: #fff;
+  }
+  .auth-logo { font-size:2.2rem; font-weight:800; text-align:center; background:linear-gradient(135deg,#f05f2e,#f5a623); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:6px; letter-spacing:-1px; }
+  .auth-subtitle { text-align:center; color:rgba(255,255,255,0.55); font-size:0.95rem; margin-bottom:36px; }
+  .auth-label { color:rgba(255,255,255,0.8); font-weight:600; font-size:0.82rem; margin-bottom:5px; text-transform:uppercase; letter-spacing:0.5px; display:block; }
+  .auth-input { background:rgba(255,255,255,0.08)!important; border:1.5px solid rgba(255,255,255,0.15)!important; border-radius:12px!important; color:#fff!important; padding:12px 15px!important; font-size:0.95rem!important; transition:border-color .2s,box-shadow .2s!important; }
+  .auth-input:focus { border-color:#f5a623!important; box-shadow:0 0 0 3px rgba(245,166,35,0.18)!important; background:rgba(255,255,255,0.12)!important; }
+  .auth-input::placeholder { color:rgba(255,255,255,0.3)!important; }
+  .auth-input.is-invalid { border-color:#ff6b6b!important; }
+  .invalid-feedback { color:#ff8e8e!important; font-size:0.82rem; margin-top:4px; }
+  .auth-btn { width:100%; padding:14px; border-radius:12px; border:none; background:linear-gradient(135deg,#f05f2e,#f5a623); color:#fff; font-weight:700; font-size:1rem; letter-spacing:0.5px; cursor:pointer; transition:transform .2s,box-shadow .2s; margin-top:8px; }
+  .auth-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(240,95,46,0.45); }
+  .auth-footer { text-align:center; margin-top:24px; color:rgba(255,255,255,0.45); font-size:0.9rem; }
+  .auth-footer a { color:#f5a623; font-weight:600; text-decoration:none; }
+  .field-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:480px) { .field-row { grid-template-columns:1fr; } .auth-card { padding:32px 24px; } }
+  ul.errorlist { list-style:none; padding:0; margin:4px 0 0; }
+  ul.errorlist li { color:#ff8e8e; font-size:0.82rem; }
+</style>
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-logo">🎁 Giftos</div>
+    <div class="auth-subtitle">Create your account — it's free!</div>
+
+    <form action="{% url 'register' %}" method="POST" novalidate>
+      {% csrf_token %}
+
+      <div class="field-row mb-3">
+        <div>
+          <label class="auth-label">First Name</label>
+          {{ form.first_name }}
+          {{ form.first_name.errors }}
+        </div>
+        <div>
+          <label class="auth-label">Last Name</label>
+          {{ form.last_name }}
+          {{ form.last_name.errors }}
+        </div>
+      </div>
+
+      <div class="form-group mb-3">
+        <label class="auth-label">Username</label>
+        {{ form.username }}
+        {{ form.username.errors }}
+      </div>
+
+      <div class="form-group mb-3">
+        <label class="auth-label">Email Address</label>
+        {{ form.email }}
+        {{ form.email.errors }}
+      </div>
+
+      <div class="field-row mb-3">
+        <div>
+          <label class="auth-label">Password</label>
+          {{ form.password1 }}
+          {{ form.password1.errors }}
+        </div>
+        <div>
+          <label class="auth-label">Confirm Password</label>
+          {{ form.password2 }}
+          {{ form.password2.errors }}
+        </div>
+      </div>
+
+      {% if form.non_field_errors %}
+        <div style="background:rgba(255,107,107,0.15); border:1px solid rgba(255,107,107,0.4); border-radius:10px; padding:12px 16px; margin-bottom:16px; color:#ff8e8e; font-size:0.9rem;">
+          {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+        </div>
+      {% endif %}
+
+      <button type="submit" class="auth-btn">Create Account →</button>
+    </form>
+
+    <div class="auth-footer">
+      Already have an account? <a href="{% url 'login' %}">Sign in here</a>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

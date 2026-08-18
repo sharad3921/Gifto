@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<section class="contact_section layout_padding">
+    <div class="container px-0">
+      <div class="heading_container ">
+        <h2 class="">
+          Contact Us
+        </h2>
+      </div>
+    </div>
+    <div class="container container-bg">
+      <div class="row">
+        <div class="col-lg-7 col-md-6 px-0">
+          <div class="map_container">
+            <div class="map-responsive">
+              <iframe src="https://www.google.com/maps?q=Law+Garden,Ahmedabad,Gujarat,India&output=embed" width="600" height="300" frameborder="0" style="border:0; width: 100%; height:100%" allowfullscreen"></iframe>
+           </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-5 px-0">
+
+         <form method="post">
+            {% csrf_token %}
+            <div>
+              <input type="text" name="name" placeholder="Name" />
+            </div>
+            <div>
+              <input type="email" name="email" placeholder="Email" />
+            </div>
+            <div>
+              <input type="text" name="number" placeholder="Phone" />
+            </div>
+            <div>
+              <input type="text" name="amount" placeholder="Amount" />
+            </div>
+            <div>
+              <input type="text"  name="message" class="message-box"  placeholder="Message" />
+            </div>
+            <div class="d-flex ">
+              <button>
+                SEND
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+{% if razorpay_payment %}
+<form method="POST" action="{% url 'payment_status' %}">
+  {% csrf_token %}
+  <script
+    src="https://checkout.razorpay.com/v1/checkout.js"
+    data-key="rzp_test_VQhEfe2NCXbbwI"
+    data-amount="{{ razorpay_payment.amount }}"
+    data-currency="INR"
+    data-order_id="{{ razorpay_payment.order_id }}"
+    data-buttontext="Pay with Razorpay"
+    data-name="Arc"
+    data-description="A Wild Sheep Chase is the third novel by Japanese author Haruki Murakami"
+    data-image="https://example.com/your_logo.jpg"
+    data-prefill.name="{{ razorpay_payment.name }}"
+    data-prefill.email="gaurav.kumar@example.com"
+    data-theme.color="#F37254"
+  ></script>
+
+  <input type="hidden" custom="Hidden Element" name="hidden" />
+</form>
+ 
+
+{% endif %}
+
+
+{% endblock content %}

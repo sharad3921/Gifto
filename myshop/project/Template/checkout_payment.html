@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="padding:40px 20px;max-width:800px;">
+  <h2>Complete Payment</h2>
+  <p>Order #{{ order.pk }} — Amount: ₹{{ order.total_amount }}</p>
+  <div style="background:#fff;padding:20px;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,0.06);">
+    <button id="rzp-button" class="btn btn-primary">Pay with Razorpay</button>
+  </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  (function(){
+    var options = {
+      "key": "{{ razorpay_key }}",
+      "amount": "{{ razorpay_payment.amount }}",
+      "currency": "INR",
+      "name": "Giftos",
+      "description": "Order #{{ order.pk }}",
+      "order_id": "{{ razorpay_payment.id }}",
+      "handler": function (response){
+        // send response to server for verification
+        var form = new FormData();
+        form.append('razorpay_order_id', response.razorpay_order_id);
+        form.append('razorpay_payment_id', response.razorpay_payment_id);
+        form.append('razorpay_signature', response.razorpay_signature);
+        fetch('{% url "checkout_verify" %}', { method: 'POST', body: form, credentials: 'same-origin' })
+          .then(r=>r.json()).then(function(data){
+            if(data.ok){ window.location = "{% url 'order_success' order.pk %}"; }
+            else { alert('Payment verification failed: '+(data.error||'Unknown')); }
+          }).catch(function(err){ alert('Verification request failed'); });
+      },
+      "prefill": { "name": "{{ order.name }}", "email": "{{ order.email }}", "contact": "{{ order.phone }}" },
+      "theme": { "color": "#f05f2e" }
+    };
+    var rzp = new Razorpay(options);
+    document.getElementById('rzp-button').addEventListener('click', function(e){ rzp.open(); e.preventDefault(); });
+    // Optionally auto-open
+    setTimeout(()=>{ rzp.open(); }, 600);
+  })();
+</script>
+
+{% endblock %}

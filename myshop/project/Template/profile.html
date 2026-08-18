@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+  .profile-wrapper {
+    background: linear-gradient(135deg, #f8f4ff 0%, #fff5ee 100%);
+    min-height: 80vh;
+    padding: 50px 20px;
+  }
+  .profile-hero {
+    background: linear-gradient(135deg, #1a1a2e, #0f3460);
+    border-radius: 24px;
+    padding: 40px;
+    color: #fff;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    box-shadow: 0 20px 60px rgba(15,52,96,0.3);
+  }
+  .profile-avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f05f2e, #f5a623);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: 0 8px 24px rgba(240,95,46,0.4);
+  }
+  .profile-hero h2 { margin:0 0 4px; font-size:1.7rem; font-weight:800; }
+  .profile-hero p  { margin:0; color:rgba(255,255,255,0.6); font-size:0.95rem; }
+  .profile-badge {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-top: 8px;
+    display: inline-block;
+  }
+  .profile-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .btn-action {
+    padding: 9px 22px;
+    border-radius: 20px;
+    border: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-action:hover { transform: translateY(-2px); text-decoration: none; }
+  .btn-edit   { background: linear-gradient(135deg,#f05f2e,#f5a623); color:#fff!important; }
+  .btn-passwd { background: rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:#fff!important; }
+  .btn-logout { background: rgba(255,107,107,0.25); border:1px solid rgba(255,107,107,0.4); color:#ffb3b3!important; }
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .info-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .info-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+  .info-card-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #aaa;
+    margin-bottom: 6px;
+  }
+  .info-card-value {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1a1a2e;
+  }
+  .info-card-icon {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+  }
+  .empty-profile {
+    text-align: center;
+    padding: 30px;
+    background: #fff;
+    border-radius: 16px;
+    color: #999;
+  }
+</style>
+
+<div class="profile-wrapper">
+  <div class="container">
+    {% if user.is_authenticated %}
+
+    <!-- Profile Hero -->
+    <div class="profile-hero">
+      <div class="profile-avatar">
+        {{ user.first_name|first|upper|default:user.username|first|upper }}
+      </div>
+      <div style="flex:1;">
+        <h2>{{ user.get_full_name|default:user.username }}</h2>
+        <p>@{{ user.username }} · {{ user.email }}</p>
+        {% if user.is_staff %}
+          <span class="profile-badge">⚙ Staff / Admin</span>
+        {% endif %}
+        <div class="profile-actions">
+          <a href="{% url 'edit_profile_user' %}" class="btn-action btn-edit">✏️ Edit Profile</a>
+          <a href="{% url 'change_password' %}" class="btn-action btn-passwd">🔒 Change Password</a>
+          <a href="{% url 'logout' %}" class="btn-action btn-logout">↩ Logout</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Cards -->
+    {% with p=user.userprofile %}
+    {% if p.fname or p.contact or p.bio %}
+    <div class="info-grid">
+      {% if p.fname %}
+      <div class="info-card">
+        <div class="info-card-icon">👤</div>
+        <div class="info-card-label">Full Name</div>
+        <div class="info-card-value">{{ p.fname }} {{ p.lname }}</div>
+      </div>
+      {% endif %}
+      {% if p.email %}
+      <div class="info-card">
+        <div class="info-card-icon">✉️</div>
+        <div class="info-card-label">Email</div>
+        <div class="info-card-value">{{ p.email }}</div>
+      </div>
+      {% endif %}
+      {% if p.contact %}
+      <div class="info-card">
+        <div class="info-card-icon">📞</div>
+        <div class="info-card-label">Contact</div>
+        <div class="info-card-value">{{ p.contact }}</div>
+      </div>
+      {% endif %}
+      {% if p.gender %}
+      <div class="info-card">
+        <div class="info-card-icon">🧬</div>
+        <div class="info-card-label">Gender</div>
+        <div class="info-card-value">{{ p.gender }}</div>
+      </div>
+      {% endif %}
+      {% if p.birthdate %}
+      <div class="info-card">
+        <div class="info-card-icon">🎂</div>
+        <div class="info-card-label">Birthday</div>
+        <div class="info-card-value">{{ p.birthdate }}</div>
+      </div>
+      {% endif %}
+      {% if p.address %}
+      <div class="info-card">
+        <div class="info-card-icon">📍</div>
+        <div class="info-card-label">Address</div>
+        <div class="info-card-value">{{ p.address }}</div>
+      </div>
+      {% endif %}
+      {% if p.bio %}
+      <div class="info-card" style="grid-column:1/-1;">
+        <div class="info-card-icon">📝</div>
+        <div class="info-card-label">Bio</div>
+        <div class="info-card-value" style="font-weight:400; color:#555;">{{ p.bio }}</div>
+      </div>
+      {% endif %}
+    </div>
+    {% else %}
+    <div class="empty-profile">
+      <div style="font-size:3rem; margin-bottom:12px;">👋</div>
+      <h5>Your profile is empty</h5>
+      <p>Add your details to personalise your experience.</p>
+      <a href="{% url 'edit_profile_user' %}" class="btn-action btn-edit" style="display:inline-flex; text-decoration:none; color:#fff;">✏️ Complete Profile</a>
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% endif %}
+  </div>
+</div>
+
+{% endblock content %}

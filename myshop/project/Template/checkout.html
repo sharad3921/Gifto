@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container layout_padding-bottom">
+    <div class="row">
+        <div class="col-lg-7 col-md-8 col-sm-12">
+            <h2 class="mt-4">Checkout</h2>
+
+            {% if messages %}
+                    {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
+                    {% endfor %}
+            {% endif %}
+
+            <form method="post" action="{% url 'checkout' %}" class="mt-3" id="checkout-form">
+                    {% csrf_token %}
+                    <div class="form-group mb-3">
+                            <label for="name">Full Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ prefill.name }}" required>
+                    </div>
+                    <div class="form-group mb-3">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ prefill.email }}" required>
+                    </div>
+                    <div class="form-group mb-3">
+                            <label for="phone">Phone</label>
+                            <input type="text" class="form-control" id="phone" name="phone" value="{{ prefill.phone }}" required>
+                    </div>
+                    <div class="form-group mb-3">
+                            <label for="address">Delivery Address</label>
+                            <textarea class="form-control" id="address" name="address" rows="3" required>{{ prefill.address }}</textarea>
+                    </div>
+                        <div class="form-group mb-3">
+                            <label>Payment Method</label><br>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="payment_method" id="online" value="online" checked>
+                                <label class="form-check-label" for="online">Online Payment</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="payment_method" id="cod" value="cod">
+                                <label class="form-check-label" for="cod">Cash on Delivery</label>
+                            </div>
+                        </div>
+
+                    <div class="d-flex align-items-center">
+                            <button type="submit" class="btn btn-success" id="place-order-btn">Place Order</button>
+                            <a href="{% url 'cart' %}" class="btn btn-secondary ml-2">Back to Cart</a>
+                    </div>
+            </form>
+        </div>
+
+        <div class="col-lg-5 col-md-4 col-sm-12">
+            <div class="card mt-4 mt-lg-0">
+                <div class="card-body">
+                    <h5 class="card-title">Order Summary</h5>
+                    {% if cart_items %}
+                        <ul class="list-unstyled">
+                            {% for item in cart_items %}
+                                <li class="d-flex justify-content-between py-2 border-bottom">
+                                    <div><strong>{{ item.name }}</strong> <small class="text-muted">x{{ item.quantity }}</small></div>
+                                    <div>₹{{ item.subtotal }}</div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <div class="d-flex justify-content-between mt-3">
+                            <strong>Total</strong>
+                            <strong>₹{{ cart_total }}</strong>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Your cart is empty.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="height:60px;"></div>
+</div>
+
+<script>
+    // Prevent double submit and provide immediate feedback
+    document.addEventListener('DOMContentLoaded', function(){
+        var form = document.getElementById('checkout-form');
+        var btn  = document.getElementById('place-order-btn');
+        if(form && btn){
+            form.addEventListener('submit', function(e){
+                btn.disabled = true;
+                btn.innerText = 'Placing...';
+            });
+        }
+        // Show popup and set navbar background when Online payment selected
+        function showPopup(message){
+            var container = document.querySelector('.flash-messages');
+            if(!container) return;
+            var div = document.createElement('div');
+            div.className = 'alert alert-info';
+            div.style.marginBottom = '8px';
+            div.textContent = message;
+            container.prepend(div);
+            setTimeout(function(){ div.classList.remove('show'); setTimeout(()=>div.remove(),300); }, 3000);
+        }
+
+        var onlineRadio = document.getElementById('online');
+        var codRadio = document.getElementById('cod');
+        var nav = document.querySelector('.custom_nav-container');
+        function updateNavBg(){
+            if(onlineRadio && onlineRadio.checked){
+                nav && nav.classList.add('nav-payment-bg');
+                showPopup('Online payment selected — you will be redirected to pay securely.');
+            } else {
+                nav && nav.classList.remove('nav-payment-bg');
+            }
+        }
+        if(onlineRadio){ onlineRadio.addEventListener('change', updateNavBg); }
+        if(codRadio){ codRadio.addEventListener('change', updateNavBg); }
+        // initialize on page load
+        updateNavBg();
+    });
+</script>
+
+{% endblock %}
